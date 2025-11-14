@@ -1,0 +1,17 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/layout :: head('Devmaster:Trang chủ (DVH)')"></head>
+<body>
+<header th:replace="fragments/layout :: header"></header>
+
+<section class="container" style="min-height: 268px">
+    <div class="row">
+        <h1>Đây là trang chủ (DVH)</h1>
+    </div>
+
+    <nav th:insert="fragments/layout :: menu"></nav>
+</section>
+
+<footer th:replace="fragments/layout :: footer"></footer>
+</body>
+</html>
