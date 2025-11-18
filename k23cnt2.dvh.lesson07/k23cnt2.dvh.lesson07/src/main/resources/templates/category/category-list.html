@@ -1,0 +1,46 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Category List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Category List</h3>
+        <a class="btn btn-primary" th:href="@{/category/create}">+ Add New Category</a>
+    </div>
+
+    <div th:if="${#lists.isEmpty(categories)}" class="alert alert-info">No Categories available.</div>
+
+    <table th:if="${!#lists.isEmpty(categories)}" class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Category Name</th>
+            <th>Status</th>
+            <th style="width:160px">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="c, i : ${categories}">
+            <td th:text="${i.index + 1}">1</td>
+            <td th:text="${c.categoryName}">Name</td>
+            <td>
+                <span th:text="${c.categoryStatus} ? 'Active' : 'Inactive'">Active</span>
+            </td>
+            <td>
+                <a class="btn btn-sm btn-warning" th:href="@{'/category/edit/' + ${c.id}}">Edit</a>
+                <a class="btn btn-sm btn-danger"
+                   th:href="@{'/category/delete/' + ${c.id}}"
+                   onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-secondary mt-3" th:href="@{/}">Back Home</a>
+</div>
+</body>
+</html>
