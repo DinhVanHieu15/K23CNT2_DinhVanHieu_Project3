@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout/dvh-layout :: layout(~{::section})">
+<section>
+    <div class="container py-3">
+        <h5 style="font-weight:700;margin-bottom:10px;">Tin đăng của tôi</h5>
+        <table class="table table-striped table-bordered table-sm">
+            <thead style="background:#0f172a;color:#f9fafb;">
+            <tr>
+                <th>#</th>
+                <th>Tên xe</th>
+                <th>Giá</th>
+                <th>Khu vực</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="dvhBike, dvhStat : ${dvhMotorbikes}">
+                <td th:text="${dvhStat.index + 1}">1</td>
+                <td th:text="${dvhBike.dvhName}">Tên xe</td>
+                <td th:text="${#numbers.formatDecimal(dvhBike.dvhPrice,0,'COMMA',0,'POINT')} + ' đ'">
+                    30.000.000 đ
+                </td>
+                <td th:text="${dvhBike.dvhProvince} ?: 'Toàn quốc'">HN</td>
+                <td>
+                    <a th:href="@{'/dvh-motorbikes/dvh-edit/' + ${dvhBike.dvhId}}"
+                       class="btn btn-sm btn-outline-primary">Sửa</a>
+                    <a th:href="@{'/dvh-motorbikes/dvh-delete/' + ${dvhBike.dvhId}}"
+                       class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('Xóa tin này?');">Xóa</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</html>

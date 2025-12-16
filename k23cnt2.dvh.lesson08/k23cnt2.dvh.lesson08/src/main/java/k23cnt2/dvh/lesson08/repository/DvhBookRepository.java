@@ -2,6 +2,7 @@ package k23cnt2.dvh.lesson08.repository;
 
 import k23cnt2.dvh.lesson08.entity.DvhBook;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface DvhBookRespository    extends JpaRepository<DvhBook, Long> {
-}
+@Repository
+public interface DvhBookRepository extends JpaRepository<DvhBook, Long> {}

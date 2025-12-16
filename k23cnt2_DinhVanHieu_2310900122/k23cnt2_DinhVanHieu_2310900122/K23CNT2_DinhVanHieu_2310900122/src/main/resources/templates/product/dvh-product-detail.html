@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${dvhProduct.dvhName != null ? dvhProduct.dvhName : 'Chi tiết sản phẩm'}">Chi tiết</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Roboto', sans-serif; }
+        .dvh-header { background: #fff !important; }
+
+        /* Ảnh sản phẩm */
+        .product-img {
+            width: 100%; border-radius: 12px; border: 1px solid #f0f0f0;
+            padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            background: white; object-fit: contain; max-height: 500px;
+        }
+
+        .price-tag { font-size: 2.5rem; font-weight: 800; color: #cc0000; letter-spacing: -1px; }
+        .spec-box { background: #fff; padding: 25px; border-radius: 12px; border: 1px solid #e9ecef; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+        .spec-item { margin-bottom: 12px; font-size: 1.05rem; display: flex; align-items: center; }
+        .spec-item i { width: 30px; text-align: center; color: #6c757d; margin-right: 10px; }
+
+        .btn-add-cart { border: 2px solid #cc0000; color: #cc0000; font-weight: 700; transition: 0.3s; background: white; }
+        .btn-add-cart:hover { background: #cc0000; color: white; transform: translateY(-2px); }
+
+        .btn-buy-now { background: #cc0000; color: white; font-weight: 700; border: none; transition: 0.3s; box-shadow: 0 4px 10px rgba(204, 0, 0, 0.3); }
+        .btn-buy-now:hover { background: #a00000; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(204, 0, 0, 0.4); }
+
+        .breadcrumb-item a { color: #666; font-weight: 500; }
+        .breadcrumb-item.active { color: #cc0000; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{layout/dvh-header :: header-section}"></div>
+
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="/dvh-products" class="text-decoration-none text-muted">Sản phẩm</a></li>
+            <li class="breadcrumb-item active fw-bold" th:text="${dvhProduct.dvhName}"></li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <div class="col-md-6">
+            <img th:src="${dvhProduct.dvhImage != null && dvhProduct.dvhImage.startsWith('http') ? dvhProduct.dvhImage : '/img/' + dvhProduct.dvhImage}"
+                 class="product-img"
+                 alt="Chi tiết sản phẩm"
+                 onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">
+        </div>
+
+        <div class="col-md-6">
+            <h1 class="fw-bold mb-2" th:text="${dvhProduct.dvhName}">Tên Sản Phẩm</h1>
+            <div class="mb-3 d-flex align-items-center gap-2">
+                <span class="badge bg-danger" th:if="${dvhProduct.dvhCondition == 'NEW'}">XE MỚI</span>
+                <span class="badge bg-warning text-dark" th:if="${dvhProduct.dvhCondition == 'USED'}">XE LƯỚT</span>
+                <span class="text-muted ms-2">Mã: <strong th:text="${dvhProduct.dvhCode}"></strong></span>
+            </div>
+
+            <div class="price-tag mb-4">
+                <span th:if="${dvhProduct.dvhPrice != null}" th:text="${#numbers.formatDecimal(dvhProduct.dvhPrice, 0, 'POINT', 0, 'COMMA')} + ' đ'"></span>
+                <span th:if="${dvhProduct.dvhPrice == null}" class="fs-3 text-secondary">Liên hệ giá</span>
+            </div>
+
+            <div class="spec-box mb-4">
+                <div class="spec-item"><i class="fas fa-motorcycle"></i> Loại xe: <strong th:text="${dvhProduct.dvhType != null ? dvhProduct.dvhType : '---'}"></strong></div>
+                <div class="spec-item"><i class="fas fa-tag"></i> Thương hiệu: <strong th:text="${dvhProduct.dvhBrand != null ? dvhProduct.dvhBrand : '---'}"></strong></div>
+                <div class="spec-item"><i class="fas fa-palette"></i> Màu sắc: <strong th:text="${dvhProduct.dvhColor != null ? dvhProduct.dvhColor : '---'}"></strong></div>
+                <div class="spec-item"><i class="fas fa-calendar-alt"></i> Năm SX: <strong th:text="${dvhProduct.dvhYear != null ? dvhProduct.dvhYear : '---'}"></strong></div>
+                <div class="spec-item"><i class="fas fa-box"></i> Tồn kho: <strong class="text-success" th:text="${dvhProduct.dvhQuantity != null ? dvhProduct.dvhQuantity : 0}"></strong> xe</div>
+            </div>
+
+            <div class="d-flex gap-3" th:if="${dvhProduct.dvhQuantity != null and dvhProduct.dvhQuantity > 0}">
+                <a th:href="@{/dvh-cart/add/{id}(id=${dvhProduct.dvhId})}" class="btn btn-add-cart flex-grow-1 py-3 text-uppercase rounded-pill">
+                    <i class="fas fa-cart-plus me-2"></i> Thêm vào giỏ
+                </a>
+                <a th:href="@{/dvh-cart/add/{id}(id=${dvhProduct.dvhId})}" class="btn btn-buy-now flex-grow-1 py-3 text-uppercase rounded-pill">
+                    <i class="fas fa-check-circle me-2"></i> Mua ngay
+                </a>
+            </div>
+
+            <div th:if="${dvhProduct.dvhQuantity == null or dvhProduct.dvhQuantity <= 0}" class="alert alert-secondary text-center fw-bold py-3">
+                <i class="fas fa-times-circle me-2"></i> TẠM HẾT HÀNG
+            </div>
+
+            <div class="mt-4 border-top pt-4">
+                <h5 class="fw-bold mb-3">Mô tả sản phẩm</h5>
+                <p class="text-muted" th:text="${dvhProduct.dvhDescription != null ? dvhProduct.dvhDescription : 'Đang cập nhật...'}" style="white-space: pre-line; text-align: justify;"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{layout/dvh-footer :: footer-section}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

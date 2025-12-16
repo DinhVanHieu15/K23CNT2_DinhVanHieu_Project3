@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="footer-section">
+
+    <style>
+        .dvh-footer {
+            background: #212529;
+            color: #f8f9fa;
+            padding: 50px 0 20px;
+            font-size: 15px;
+        }
+        .dvh-footer h5 {
+            color: #fff;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+        }
+        .dvh-footer a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: 0.3s;
+            display: block;
+            padding: 4px 0;
+        }
+        .dvh-footer a:hover {
+            color: #cc0000;
+        }
+
+        /* --- CSS SỬA LẠI ICON MẠNG XÃ HỘI (MÀU XÁM, CĂN GIỮA) --- */
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background: #495057; /* Màu nền xám (thay vì đỏ) */
+            color: white !important; /* Icon màu trắng */
+            display: inline-flex; /* Dùng inline-flex để căn giữa tốt hơn */
+            align-items: center;     /* Căn giữa dọc */
+            justify-content: center; /* Căn giữa ngang */
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: 0.3s;
+            font-size: 18px;
+            text-decoration: none !important;
+            vertical-align: middle; /* Đảm bảo thẳng hàng với văn bản nếu có */
+        }
+        .social-icon:hover {
+            background: #cc0000; /* Chỉ chuyển đỏ khi di chuột vào */
+            transform: translateY(-3px);
+        }
+
+        /* Đảm bảo các icon trong list menu có khoảng cách đúng */
+        .list-unstyled a i {
+            width: 20px;
+            text-align: center;
+            margin-right: 5px;
+        }
+    </style>
+
+    <footer class="dvh-footer">
+        <div class="container">
+            <div class="row g-4">
+
+                <div class="col-md-4">
+                    <h5 class="mb-3">DVH MOTORBIKE</h5>
+                    <p>
+                        Cửa hàng chuyên cung cấp các dòng xe máy, mô tô chính hãng và dịch vụ bảo dưỡng, sửa chữa uy tín tại Hà Nội.
+                    </p>
+                    <p class="mt-3">
+                        <i class="fas fa-map-marker-alt me-2 text-danger"></i> 25 Vũ Ngọc Phan, Láng Hạ, Đống Đa, HN.
+                    </p>
+                </div>
+
+                <div class="col-md-2">
+                    <h5>Sản phẩm</h5>
+                    <ul class="list-unstyled">
+                        <li><a th:href="@{/dvh-products?type=TAY_GA}"><i class="fas fa-angle-right"></i> Xe Tay Ga</a></li>
+                        <li><a th:href="@{/dvh-products?type=XE_SO}"><i class="fas fa-angle-right"></i> Xe Số</a></li>
+                        <li><a th:href="@{/dvh-products?type=CON_TAY}"><i class="fas fa-angle-right"></i> Xe Côn Tay</a></li>
+                        <li><a th:href="@{/dvh-products?type=MO_TO}"><i class="fas fa-angle-right"></i> Mô Tô PKL</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3">
+                    <h5>Hỗ trợ</h5>
+                    <ul class="list-unstyled">
+                        <li><a th:href="@{/dvh-services}"><i class="fas fa-angle-right"></i> Dịch vụ Bảo dưỡng</a></li>
+                        <li><a th:href="@{/dvh-promotions}"><i class="fas fa-angle-right"></i> Khuyến mãi</a></li>
+                        <li><a th:href="@{/dvh-blogs}"><i class="fas fa-angle-right"></i> Tin tức xe</a></li>
+                        <li><a th:href="@{/dvh-contact}"><i class="fas fa-angle-right"></i> Liên hệ</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3">
+                    <h5>Liên hệ</h5>
+                    <p class="fw-bold">Hotline (24/7): <span style="color: #cc0000;">1900 1234</span></p>
+                    <p>Email: hotro@dvhmotorbike.vn</p>
+
+                    <div class="mt-4 d-flex align-items-center"> <a href="#" class="social-icon" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon" title="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-5 pt-3 border-top border-secondary">
+                <small>&copy; 2025 DVH Motorbike. Thiết kế bởi Dinh Van Hieu.</small>
+            </div>
+        </div>
+    </footer>
+
+</div>
+</body>
+</html>

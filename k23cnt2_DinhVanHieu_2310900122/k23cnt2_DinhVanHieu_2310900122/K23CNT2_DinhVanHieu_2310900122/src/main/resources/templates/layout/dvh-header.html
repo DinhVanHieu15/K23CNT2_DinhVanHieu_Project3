@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="header-section">
+
+    <style>
+        /* CSS Header Chính */
+        .dvh-header {
+            background: #fff; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000;
+        }
+        .dvh-header-left { display: flex; align-items: center; gap: 20px; }
+        .dvh-menu-icon { font-size: 24px; color: #333; cursor: pointer; transition: 0.3s; padding: 5px; border-radius: 4px; }
+        .dvh-menu-icon:hover { background: #f0f0f0; color: #cc0000; }
+
+        .dvh-search-wrap { flex: 1; display: flex; justify-content: center; margin: 0 20px; }
+        .dvh-search-box {
+            background: #f0f2f5; padding: 10px 20px; border-radius: 50px; width: 100%; max-width: 600px;
+            display: flex; align-items: center; border: 1px solid transparent; transition: 0.3s;
+        }
+        .dvh-search-box:focus-within { background: #fff; border-color: #cc0000; box-shadow: 0 0 0 4px rgba(204, 0, 0, 0.1); }
+        .dvh-search-box input { border: none; background: transparent; outline: none; flex: 1; font-size: 15px; margin-left: 10px; }
+        .dvh-header-right { display: flex; align-items: center; gap: 15px; }
+
+        /* CSS CHO MENU DANH MỤC (OFFCANVAS) - STYLE SHOPEE */
+        .dvh-offcanvas-header { background: #cc0000; color: white; padding: 20px; }
+        .dvh-offcanvas-title { font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-size: 18px; display: flex; align-items: center; gap: 10px; }
+
+        .dvh-menu-list { padding: 0; margin: 0; list-style: none; }
+        .dvh-menu-item { border-bottom: 1px solid #f5f5f5; }
+        .dvh-menu-link {
+            display: flex; align-items: center; padding: 15px 20px;
+            color: #444; font-weight: 600; text-decoration: none;
+            transition: all 0.3s ease; font-size: 15px;
+        }
+
+        /* Hiệu ứng Hover xịn xò */
+        .dvh-menu-link:hover {
+            background: #fff5f5; /* Nền hồng nhạt */
+            color: #cc0000;       /* Chữ đỏ */
+            padding-left: 28px;   /* Thụt vào một chút */
+        }
+
+        /* Icon trong menu */
+        .dvh-menu-link i { width: 28px; color: #999; font-size: 16px; transition: 0.3s; }
+        .dvh-menu-link:hover i { color: #cc0000; transform: scale(1.1); }
+
+        .icon-btn { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; position: relative; }
+        .icon-btn:hover { background-color: #f0f2f5; }
+    </style>
+
+    <header class="dvh-header">
+        <div class="dvh-header-left">
+            <div class="dvh-menu-icon" data-bs-toggle="offcanvas" data-bs-target="#dvhSidebarMenu" title="Danh mục">
+                <i class="fas fa-bars"></i>
+            </div>
+
+            <a th:href="@{/}" style="font-weight: 900; font-size: 24px; color: #cc0000; letter-spacing: -1px; margin-left: 10px; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                <i class="fas fa-motorcycle"></i> DVH MOTORBIKE
+            </a>
+        </div>
+
+        <div class="dvh-search-wrap">
+            <form th:action="@{/}" method="get" class="dvh-search-box">
+                <span style="font-size: 18px; color: #999;">🔍</span>
+                <input type="text" name="dvhKeyword"
+                       placeholder="Bạn muốn tìm xe gì hôm nay?"
+                       th:value="${dvhKeyword}">
+            </form>
+        </div>
+
+        <div class="dvh-header-right">
+
+            <div class="dropdown">
+                <div class="icon-btn" title="Giỏ hàng" data-bs-toggle="dropdown">
+                    <i class="fas fa-shopping-cart" style="font-size: 20px; color: #333;"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 10px; padding: 4px 6px;">2</span>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end shadow" style="border-radius: 10px; border: none; padding: 10px;">
+                    <li><a class="dropdown-item rounded py-2" th:href="@{/dvh-cart}"><i class="fas fa-shopping-cart text-danger me-2"></i> Xem Giỏ Hàng</a></li>
+                    <li><a class="dropdown-item rounded py-2" th:href="@{/dvh-orders}"><i class="fas fa-clipboard-list text-success me-2"></i> Đơn Hàng Của Bạn</a></li>
+                </ul>
+            </div>
+
+            <th:block th:if="${session.dvhCurrentUser == null}">
+                <a th:href="@{/dvh-login/dvh-login}" class="icon-btn" style="background: #cc0000; color: white;" title="Đăng nhập">
+                    <i class="fas fa-user"></i>
+                </a>
+            </th:block>
+
+            <th:block th:if="${session.dvhCurrentUser != null}">
+                <div class="dropdown">
+                    <div class="d-flex align-items-center gap-2" style="cursor: pointer;" data-bs-toggle="dropdown">
+                        <div style="width: 40px; height: 40px; background: #cc0000; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">
+                            <span th:text="${#strings.substring(session.dvhCurrentUser.dvhFullName,0,1)}">U</span>
+                        </div>
+                    </div>
+
+                    <ul class="dropdown-menu dropdown-menu-end shadow" style="border-radius: 12px; border: none; overflow: hidden; min-width: 200px;">
+                        <li class="p-3 bg-light border-bottom">
+                            <small class="text-muted">Xin chào,</small><br>
+                            <strong style="color: #cc0000; font-size: 16px;" th:text="${session.dvhCurrentUser.dvhFullName}">User</strong>
+                        </li>
+
+                        <li th:if="${session.dvhCurrentUser.dvhRole == 'ADMIN' or session.dvhCurrentUser.dvhRole == 'ROLE_ADMIN'}">
+                            <a class="dropdown-item py-3 text-warning fw-bold" th:href="@{/dvh-admin/dashboard}">
+                                <i class="fas fa-tachometer-alt me-2"></i> Quản lý Website
+                            </a>
+                        </li>
+
+                        <li><a class="dropdown-item py-2" th:href="@{/dvh-profile}"><i class="fas fa-user-circle me-2 text-primary"></i> Hồ sơ cá nhân</a></li>
+                        <li><a class="dropdown-item py-2" th:href="@{/dvh-orders}"><i class="fas fa-box-open me-2 text-success"></i> Đơn mua</a></li>
+                        <li><hr class="dropdown-divider my-1"></li>
+                        <li><a class="dropdown-item py-2 text-danger" th:href="@{/dvh-login/dvh-logout}"><i class="fas fa-sign-out-alt me-2"></i> Đăng xuất</a></li>
+                    </ul>
+                </div>
+            </th:block>
+        </div>
+    </header>
+
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="dvhSidebarMenu" style="width: 320px;">
+        <div class="offcanvas-header dvh-offcanvas-header">
+            <h5 class="offcanvas-title dvh-offcanvas-title">
+                <i class="fas fa-list-ul"></i> DANH MỤC
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+
+        <div class="offcanvas-body p-0">
+            <ul class="dvh-menu-list">
+                <li class="dvh-menu-item">
+                    <a th:href="@{/dvh-products}" class="dvh-menu-link">
+                        <i class="fas fa-motorcycle"></i> Sản phẩm Xe máy
+                    </a>
+                </li>
+
+                <li class="dvh-menu-item">
+                    <a th:href="@{/dvh-services}" class="dvh-menu-link">
+                        <i class="fas fa-tools"></i> Dịch vụ & Bảo dưỡng
+                    </a>
+                </li>
+
+                <li class="dvh-menu-item">
+                    <a th:href="@{/dvh-promotions}" class="dvh-menu-link">
+                        <i class="fas fa-gift"></i> Khuyến mãi HOT
+                    </a>
+                </li>
+
+                <li class="dvh-menu-item">
+                    <a th:href="@{/dvh-blogs}" class="dvh-menu-link">
+                        <i class="fas fa-newspaper"></i> Tin tức xe
+                    </a>
+                </li>
+
+                <li class="dvh-menu-item">
+                    <a th:href="@{/dvh-contact}" class="dvh-menu-link">
+                        <i class="fas fa-headset"></i> Liên hệ & Hỗ trợ
+                    </a>
+                </li>
+            </ul>
+
+            <div class="p-3 mt-auto text-center">
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px dashed #ccc;">
+                    <i class="fas fa-phone-alt text-danger fa-2x mb-2"></i>
+                    <h6 class="fw-bold">Hotline: 1900 1234</h6>
+                    <small class="text-muted">Hỗ trợ 24/7 miễn phí</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

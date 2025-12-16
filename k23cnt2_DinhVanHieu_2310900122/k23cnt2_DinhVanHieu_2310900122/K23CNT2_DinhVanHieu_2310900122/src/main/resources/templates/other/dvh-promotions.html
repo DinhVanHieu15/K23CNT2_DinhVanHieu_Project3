@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Săn Mã Giảm Giá - DVH Motorbike</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body { background-color: #f9f9f9; font-family: 'Segoe UI', sans-serif; }
+        .dvh-header { background: #fff !important; }
+
+        /* --- CSS CHO COUPON TICKET --- */
+        .coupon-card {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            overflow: hidden;
+            position: relative;
+            transition: 0.3s;
+            border: 1px solid #eee;
+            min-height: 160px;
+        }
+        .coupon-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(204, 0, 0, 0.15); border-color: #ffcccc; }
+
+        .coupon-left {
+            background: linear-gradient(135deg, #cc0000, #ff4d4d);
+            width: 30%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; padding: 15px; text-align: center;
+            border-right: 2px dashed #fff; position: relative;
+        }
+
+        .coupon-right { width: 70%; padding: 20px; display: flex; flex-direction: column; justify-content: center; }
+
+        .circle-top, .circle-bottom {
+            width: 24px; height: 24px; background: #f9f9f9; border-radius: 50%;
+            position: absolute; left: 28.5%; z-index: 10;
+        }
+        .circle-top { top: -12px; }
+        .circle-bottom { bottom: -12px; }
+
+        .discount-amount { font-size: 1.8rem; font-weight: 800; color: #cc0000; }
+        .voucher-code {
+            background: #eee; color: #333; padding: 5px 12px;
+            border-radius: 4px; font-weight: bold; font-family: monospace; letter-spacing: 1px; font-size: 1.1rem;
+        }
+
+        .card-expired { opacity: 0.6; pointer-events: none; filter: grayscale(100%); }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{layout/dvh-header :: header-section}"></div>
+
+<div class="bg-dark text-white py-5 text-center mb-5"
+     style="background-image: url('https://img.freepik.com/free-vector/gradient-sale-background_23-2148934477.jpg'); background-size: cover; background-position: center;">
+    <div style="background: rgba(0,0,0,0.6); padding: 40px;">
+        <h1 class="fw-bold text-uppercase display-5">🎁 KHO VOUCHER KHUYẾN MÃI</h1>
+        <p class="lead">Săn mã giảm giá cực sốc - Mua xe giá tốt ngay hôm nay!</p>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row g-4">
+
+        <div class="col-lg-6" th:each="v : ${dvhVouchers}">
+            <div class="coupon-card"
+                 th:classappend="${(v.dvhQuantity <= 0) || (v.dvhEndDate != null && v.dvhEndDate.isBefore(T(java.time.LocalDate).now()))} ? 'card-expired'">
+
+                <div class="circle-top"></div>
+                <div class="circle-bottom"></div>
+
+                <div class="coupon-left">
+                    <i class="fas fa-gift fa-3x mb-2"></i>
+                    <div class="fw-bold text-uppercase small">DVH Voucher</div>
+                </div>
+
+                <div class="coupon-right">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="text-muted text-uppercase small fw-bold mb-1">Giảm giá trực tiếp</h6>
+                            <div class="discount-amount" th:text="${#numbers.formatDecimal(v.dvhDiscount, 0, 'POINT', 0, 'COMMA')} + 'đ'"></div>
+                        </div>
+
+                        <span th:if="${v.dvhQuantity > 0}" class="badge bg-success">Đang có hiệu lực</span>
+                        <span th:if="${v.dvhQuantity <= 0}" class="badge bg-secondary">Hết lượt</span>
+                    </div>
+
+                    <p class="text-muted small mt-2 mb-3">
+                        <i class="far fa-clock me-1"></i> Hạn dùng:
+                        <span th:text="${v.dvhEndDate != null ? v.dvhEndDate : 'Vô thời hạn'}" class="fw-bold"></span>
+                        <br>
+                        <i class="fas fa-layer-group me-1"></i> Còn lại: <strong th:text="${v.dvhQuantity}"></strong> lượt
+                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded border">
+                        <span class="voucher-code" th:text="${v.dvhCode}">CODE</span>
+
+                        <button class="btn btn-sm btn-outline-danger fw-bold"
+                                th:data-code="${v.dvhCode}"
+                                onclick="copyCode(this.getAttribute('data-code'), this)"
+                                th:disabled="${v.dvhQuantity <= 0}">
+                            <i class="fas fa-copy me-1"></i> Sao chép
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${dvhVouchers == null || dvhVouchers.empty}" class="col-12 text-center py-5">
+            <h4 class="text-muted fw-bold">Hiện chưa có mã giảm giá nào.</h4>
+            <a href="/" class="btn btn-primary mt-3">Về trang chủ</a>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function copyCode(code, btnElement) {
+        if (!code) return;
+
+        navigator.clipboard.writeText(code).then(function() {
+            // Hiệu ứng nút bấm
+            let originalContent = btnElement.innerHTML;
+
+            btnElement.innerHTML = '<i class="fas fa-check"></i> Đã chép';
+            btnElement.classList.remove('btn-outline-danger');
+            btnElement.classList.add('btn-success');
+
+            // Trả lại trạng thái cũ sau 2 giây
+            setTimeout(() => {
+                btnElement.innerHTML = originalContent;
+                btnElement.classList.add('btn-outline-danger');
+                btnElement.classList.remove('btn-success');
+            }, 2000);
+
+            // Alert nhỏ (optional)
+            // alert("Đã sao chép mã: " + code);
+        }, function(err) {
+            alert('Lỗi khi sao chép: ' + err);
+        });
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

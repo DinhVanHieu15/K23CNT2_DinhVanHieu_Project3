@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Blog - DVH Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', sans-serif; }
+
+        /* SIDEBAR CHUẨN */
+        .dvh-sidebar {
+            height: 100vh; width: 250px; position: fixed; top: 0; left: 0;
+            background: #343a40; color: white; padding-top: 20px; z-index: 1000;
+        }
+        .dvh-sidebar a {
+            padding: 15px 25px; text-decoration: none; font-size: 16px;
+            color: #cfd8dc; display: block; transition: 0.3s;
+        }
+        .dvh-sidebar a:hover { background: #495057; color: white; }
+        .dvh-sidebar .active { background: #cc0000; color: white; }
+        .dvh-sidebar i { width: 25px; }
+
+        .dvh-content { margin-left: 250px; padding: 30px; }
+        .blog-thumb { width: 100px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+
+<div class="dvh-sidebar">
+    <h3 class="text-center mb-4 fw-bold">DVH ADMIN</h3>
+    <a th:href="@{/dvh-admin/dashboard}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <a th:href="@{/dvh-admin/motorbikes}"><i class="fas fa-motorcycle"></i> QL Sản phẩm</a>
+    <a th:href="@{/dvh-admin/orders}"><i class="fas fa-shopping-cart"></i> QL Đơn hàng</a>
+    <a th:href="@{/dvh-admin/inventory}"><i class="fas fa-warehouse"></i> QL Kho hàng</a>
+    <a th:href="@{/dvh-admin/customers}"><i class="fas fa-users"></i> QL Khách hàng</a>
+
+    <a th:href="@{/dvh-admin/employees}"><i class="fas fa-user-tie"></i> QL Nhân viên</a>
+
+    <a th:href="@{/dvh-admin/vouchers}"><i class="fas fa-ticket-alt"></i> QL Voucher</a>
+
+    <a th:href="@{/dvh-admin/blogs}" class="active"><i class="fas fa-newspaper"></i> Tin tức & Blog</a>
+
+    <a th:href="@{/dvh-admin/banners}"><i class="fas fa-images"></i> QL Banner</a>
+
+    <hr style="border-color: #555;">
+    <a th:href="@{/}" class="text-success fw-bold"><i class="fas fa-home"></i> Về trang chủ</a>
+    <a th:href="@{/dvh-login/dvh-logout}" class="text-danger"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+</div>
+
+<div class="dvh-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">📰 Quản lý Tin tức</h2>
+        <a th:href="@{/dvh-admin/blogs/create}" class="btn btn-primary"><i class="fas fa-plus"></i> Viết Bài Mới</a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Hình ảnh</th>
+                    <th>Tiêu đề</th>
+                    <th>Ngày đăng</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="blog : ${dvhBlogs}">
+                    <td th:text="${blog.dvhId}">1</td>
+                    <td>
+                        <img th:src="${blog.dvhImage != null && blog.dvhImage.startsWith('http') ? blog.dvhImage : '/img/' + blog.dvhImage}"
+                             class="blog-thumb"
+                             onerror="this.src='https://via.placeholder.com/100x60?text=No+Img'">
+                    </td>
+                    <td class="fw-bold" th:text="${blog.dvhTitle}">Tiêu đề bài viết</td>
+
+                    <td th:text="${blog.dvhCreatedDate != null ? #temporals.format(blog.dvhCreatedDate, 'dd-MM-yyyy') : (blog.dvhCreatedAt != null ? #temporals.format(blog.dvhCreatedAt, 'dd-MM-yyyy HH:mm') : '')}">
+                        2025-12-07
+                    </td>
+
+                    <td>
+                        <a th:href="@{/dvh-admin/blogs/edit/{id}(id=${blog.dvhId})}" class="btn btn-sm btn-outline-warning me-1">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a th:href="@{/dvh-admin/blogs/delete/{id}(id=${blog.dvhId})}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Xóa bài viết này?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

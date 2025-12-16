@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Giỏ hàng - DVH Motorbike</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .dvh-header { background: #fff !important; }
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+
+        .cart-img {
+            width: 80px; height: 80px; object-fit: cover;
+            border-radius: 5px; border: 1px solid #ddd;
+            background: #fff;
+        }
+        .summary-card {
+            background: white; padding: 25px; border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{layout/dvh-header :: header-section}"></div>
+
+<div class="container py-5">
+    <h3 class="mb-4 fw-bold text-uppercase"><i class="fas fa-shopping-cart text-danger me-2"></i> Giỏ Hàng Của Bạn</h3>
+
+    <div th:if="${dvhError}" class="alert alert-danger" th:text="${dvhError}"></div>
+    <div th:if="${dvhMessage}" class="alert alert-success" th:text="${dvhMessage}"></div>
+
+    <div th:if="${dvhCart == null || dvhCart.empty}" class="text-center py-5 bg-white rounded shadow-sm">
+        <img src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png" width="100" style="opacity: 0.5;">
+        <h5 class="text-muted mt-3">Giỏ hàng của bạn đang trống!</h5>
+        <a th:href="@{/dvh-products}" class="btn btn-outline-danger mt-3 fw-bold">
+            <i class="fas fa-arrow-left me-2"></i> Mua sắm ngay
+        </a>
+    </div>
+
+    <div class="row g-4" th:if="${dvhCart != null && !dvhCart.empty}">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded overflow-hidden">
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-light">
+                        <tr>
+                            <th class="py-3 ps-4">Sản phẩm</th>
+                            <th class="text-center">Đơn giá</th>
+                            <th class="text-center">Số lượng</th>
+                            <th class="text-center">Thành tiền</th>
+                            <th class="text-center">Xóa</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${dvhCart}">
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <img th:src="${item.dvhMotorbike.dvhImage != null && item.dvhMotorbike.dvhImage.startsWith('http') ? item.dvhMotorbike.dvhImage : '/img/' + item.dvhMotorbike.dvhImage}"
+                                         class="cart-img me-3"
+                                         alt="Xe"
+                                         onerror="this.onerror=null; this.src='https://via.placeholder.com/80?text=No+Img'">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold text-dark" th:text="${item.dvhMotorbike.dvhName}">Tên xe</h6>
+                                        <small class="text-muted" th:text="${item.dvhMotorbike.dvhCode}">Mã SP</small>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="text-center text-muted fw-bold"
+                                th:text="${#numbers.formatDecimal(item.dvhMotorbike.dvhPrice, 0, 'POINT', 0, 'COMMA')} + ' đ'">
+                            </td>
+
+                            <td class="text-center">
+                                <form th:action="@{/dvh-cart/update}" method="post" class="d-flex justify-content-center align-items-center gap-1">
+                                    <input type="hidden" name="id" th:value="${item.dvhMotorbike.dvhId}">
+                                    <button type="submit" name="action" value="decrease" class="btn btn-sm btn-light border px-2 fw-bold">-</button>
+                                    <input type="text" class="form-control form-control-sm text-center fw-bold bg-white" style="width: 40px;" th:value="${item.dvhQuantity}" readonly>
+                                    <button type="submit" name="action" value="increase" class="btn btn-sm btn-light border px-2 fw-bold">+</button>
+                                </form>
+                            </td>
+
+                            <td class="text-center fw-bold text-danger"
+                                th:text="${#numbers.formatDecimal(item.dvhMotorbike.dvhPrice * item.dvhQuantity, 0, 'POINT', 0, 'COMMA')} + ' đ'">
+                            </td>
+
+                            <td class="text-center">
+                                <a th:href="@{/dvh-cart/remove/{id}(id=${item.dvhMotorbike.dvhId})}"
+                                   class="text-secondary hover-danger"
+                                   onclick="return confirm('Xóa sản phẩm này khỏi giỏ?')"
+                                   title="Xóa">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="summary-card">
+                <h5 class="fw-bold mb-4 border-bottom pb-2">Cộng Giỏ Hàng</h5>
+
+                <form action="#" method="post" class="mb-4">
+                    <label class="form-label fw-bold small text-muted">MÃ GIẢM GIÁ (VOUCHER)</label>
+                    <div class="input-group">
+                        <input type="text" name="voucherCode" class="form-control" placeholder="Nhập mã..." disabled>
+                        <button class="btn btn-dark" type="button" disabled>Áp dụng</button>
+                    </div>
+                    <small class="text-muted fst-italic">*Tính năng đang bảo trì</small>
+                </form>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Tạm tính:</span>
+                    <span class="fw-bold" th:text="${#numbers.formatDecimal(dvhTotalAmount, 0, 'POINT', 0, 'COMMA')} + ' đ'">0 đ</span>
+                </div>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Thuế (VAT):</span>
+                    <span>0 đ</span>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between mb-4">
+                    <span class="fw-bold fs-5">Tổng cộng:</span>
+                    <span class="fw-bold text-danger fs-4" th:text="${#numbers.formatDecimal(dvhTotalAmount, 0, 'POINT', 0, 'COMMA')} + ' đ'">0 đ</span>
+                </div>
+
+                <a th:href="@{/dvh-cart/checkout}" class="btn btn-danger w-100 py-3 fw-bold text-uppercase shadow-sm">
+                    <i class="fas fa-check-circle me-2"></i> Tiến Hành Thanh Toán
+                </a>
+
+                <a th:href="@{/dvh-products}" class="btn btn-outline-secondary w-100 py-2 fw-bold mt-2">
+                    <i class="fas fa-arrow-left me-2"></i> Mua thêm
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{layout/dvh-footer :: footer-section}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

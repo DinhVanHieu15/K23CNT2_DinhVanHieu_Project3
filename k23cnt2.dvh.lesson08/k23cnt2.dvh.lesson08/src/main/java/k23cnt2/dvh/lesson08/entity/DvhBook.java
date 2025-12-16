@@ -1,6 +1,5 @@
 package k23cnt2.dvh.lesson08.entity;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,16 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Table(name = "dvh_book")
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-
 public class DvhBook {
-    @Id
-            @GeneratedValue(strategy = GenerationType.AUTO)
-    Long dvhid;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long dvhId;
+
     String dvhCode;
     String dvhName;
     String dvhDescription;
@@ -27,15 +23,12 @@ public class DvhBook {
     Double dvhPrice;
     Boolean dvhActive;
 
-    // thiet ke quan he voi bang dvhAuthor
-
+    // đặt tên field rõ ràng để dùng ở mappedBy phía Author
     @ManyToMany
     @JoinTable(
             name = "dvh_book_author",
-            joinColumns = @JoinColumn(name = "dvhBookId"),
-            inverseJoinColumns = @JoinColumn(name = "dvhAuthorId")
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id")
     )
-
-    List<DvhAuthor> DvhAuthor = new ArrayList<>();
-
+    List<DvhAuthor> dvhAuthors = new ArrayList<>();
 }

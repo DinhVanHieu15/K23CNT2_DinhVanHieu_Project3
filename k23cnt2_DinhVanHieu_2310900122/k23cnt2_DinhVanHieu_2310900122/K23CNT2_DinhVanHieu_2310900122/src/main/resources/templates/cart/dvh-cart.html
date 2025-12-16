@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Giỏ hàng - DVH Motorbike</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .dvh-header { background: #fff !important; }
+        .cart-img { width: 80px; height: 80px; object-fit: cover; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{layout/dvh-header :: header-section}"></div>
+
+<div class="container py-5">
+    <h3 class="fw-bold mb-4 text-danger"><i class="fas fa-shopping-cart"></i> Giỏ Hàng Của Bạn</h3>
+
+    <div class="row g-4" th:if="${dvhCart != null and !dvhCart.empty}">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Sản phẩm</th>
+                        <th>Đơn giá</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                        <th>Xóa</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${dvhCart}">
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <img th:src="${item.dvhImage != null ? '/img/' + item.dvhImage : 'https://via.placeholder.com/80'}" class="cart-img me-3 rounded">
+                                <h6 class="mb-0 fw-bold" th:text="${item.dvhName}"></h6>
+                            </div>
+                        </td>
+                        <td th:text="${#numbers.formatDecimal(item.dvhPrice, 0, 'POINT', 0, 'COMMA')} + ' đ'"></td>
+                        <td><input type="text" class="form-control text-center" style="width: 60px" th:value="${item.dvhQuantity}" readonly></td>
+                        <td class="text-danger fw-bold" th:text="${#numbers.formatDecimal(item.dvhTotalPrice, 0, 'POINT', 0, 'COMMA')} + ' đ'"></td>
+                        <td><a th:href="@{/dvh-cart/remove/{id}(id=${item.dvhId})}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-trash"></i></a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-3"><a href="/dvh-cart/clear" class="btn btn-outline-secondary btn-sm">Xóa tất cả</a></div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm p-4 bg-white">
+                <h5 class="fw-bold mb-3">Cộng Giỏ Hàng</h5>
+
+                <form action="/dvh-cart/apply-voucher" method="post" class="mb-3">
+                    <label class="form-label small text-muted fw-bold">NHẬP MÃ GIẢM GIÁ (VD: SALE10)</label>
+                    <div class="input-group">
+                        <input type="text" name="voucherCode" class="form-control" placeholder="Mã voucher" required>
+                        <button class="btn btn-dark" type="submit">Áp dụng</button>
+                    </div>
+                </form>
+
+                <div th:if="${dvhVoucher != null}" class="alert alert-success d-flex justify-content-between align-items-center p-2 small mb-3">
+                    <span><i class="fas fa-tag me-1"></i> Mã: <strong th:text="${dvhVoucher.dvhCode}"></strong></span>
+                    <a href="/dvh-cart/remove-voucher" class="text-danger"><i class="fas fa-times"></i></a>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Tạm tính:</span>
+                    <span class="fw-bold" th:text="${#numbers.formatDecimal(dvhTotalAmount, 0, 'POINT', 0, 'COMMA')} + ' đ'">0 đ</span>
+                </div>
+
+                <div class="d-flex justify-content-between mb-2 text-success" th:if="${dvhDiscount != null && dvhDiscount > 0}">
+                    <span>Giảm giá:</span>
+                    <span th:text="'- ' + ${#numbers.formatDecimal(dvhDiscount, 0, 'POINT', 0, 'COMMA')} + ' đ'">-0 đ</span>
+                </div>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Thuế (VAT):</span>
+                    <span>0 đ</span>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between mb-4">
+                    <span class="fw-bold fs-5">Tổng cộng:</span>
+                    <span class="fw-bold text-danger fs-4" th:text="${#numbers.formatDecimal(dvhFinalTotal, 0, 'POINT', 0, 'COMMA')} + ' đ'">0 đ</span>
+                </div>
+
+                <a href="/dvh-checkout" class="btn btn-danger w-100 py-3 fw-bold text-uppercase">
+                    TIẾN HÀNH THANH TOÁN
+                </a>
+
+                <a href="/dvh-products" class="btn btn-outline-dark w-100 mt-2">Tiếp tục mua hàng</a>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${dvhCart == null or dvhCart.empty}" class="text-center py-5">
+        <h4 class="text-muted">Giỏ hàng trống!</h4>
+        <a href="/dvh-products" class="btn btn-danger mt-3">MUA NGAY</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

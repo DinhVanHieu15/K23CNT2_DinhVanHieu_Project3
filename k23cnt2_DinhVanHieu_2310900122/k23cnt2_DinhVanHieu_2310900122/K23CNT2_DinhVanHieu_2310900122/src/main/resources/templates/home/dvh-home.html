@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang chủ - DVH Motorbike</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root { --primary-color: #cc0000; --bg-light: #f5f5f5; }
+        body { background-color: var(--bg-light); font-family: 'Roboto', sans-serif; }
+        a { text-decoration: none; color: inherit; }
+        .dvh-header { background: #fff !important; }
+
+        /* --- 1. BANNER --- */
+        .main-banner { width: 100%; height: 550px; object-fit: cover; display: block; }
+        .carousel-caption-custom {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: rgba(0, 0, 0, 0.35); z-index: 10;
+        }
+        .carousel-control-prev, .carousel-control-next { z-index: 20; width: 5%; }
+        .carousel-control-prev-icon, .carousel-control-next-icon { width: 3rem; height: 3rem; }
+        .banner-title {
+            font-size: 3.5rem; font-weight: 900; text-transform: uppercase; color: #fff;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.8); margin-bottom: 15px; animation: fadeInUp 1s ease-in-out;
+        }
+        .banner-subtitle {
+            font-size: 1.3rem; color: #f1f1f1; text-shadow: 1px 1px 5px rgba(0,0,0,0.6);
+            margin-bottom: 30px; font-weight: 500; animation: fadeInUp 1.2s ease-in-out;
+        }
+        .btn-banner {
+            padding: 12px 40px; font-size: 1.1rem; font-weight: bold; text-transform: uppercase;
+            border-radius: 50px; background-color: #cc0000; color: white;
+            border: 2px solid #cc0000; transition: 0.3s; animation: fadeInUp 1.5s ease-in-out;
+            text-decoration: none; box-shadow: 0 4px 15px rgba(204, 0, 0, 0.4);
+        }
+        .btn-banner:hover { background-color: transparent; border-color: white; color: white; transform: scale(1.05); }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- 2. CARD SẢN PHẨM --- */
+        .dvh-product-card { background: white; border-radius: 10px; overflow: hidden; transition: 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.05); height: 100%; border: 1px solid #eee; }
+        .dvh-product-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); border-color: transparent; }
+        .product-img-wrap { height: 240px; overflow: hidden; position: relative; background: #f9f9f9; padding: 15px; display: flex; align-items: center; justify-content: center; }
+        .product-img { max-width: 100%; max-height: 100%; object-fit: contain; transition: 0.3s; }
+        .dvh-product-card:hover .product-img { transform: scale(1.08); }
+        .product-info { padding: 20px; text-align: center; }
+        .product-name { font-weight: 700; font-size: 17px; color: #333; margin-bottom: 10px; display: block; height: 48px; overflow: hidden; line-height: 1.4; }
+        .product-name:hover { color: var(--primary-color); }
+        .product-price { color: var(--primary-color); font-weight: 800; font-size: 19px; display: block; margin-bottom: 15px;}
+
+        /* --- 3. SLIDER SẢN PHẨM --- */
+        .dvh-slider-section {
+            background: #fff; padding: 40px 30px; border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05); position: relative;
+        }
+        .dvh-slider-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 35px; }
+        .dvh-slider-tab {
+            border: 2px solid #f1f5f9; background: transparent; color: #64748b;
+            padding: 10px 25px; border-radius: 30px; font-weight: 700;
+            font-size: 1rem; transition: all 0.3s ease; display: inline-block; text-align: center;
+        }
+        .dvh-slider-tab:hover, .dvh-slider-tab.active {
+            background: #cc0000; border-color: #cc0000; color: white;
+            transform: translateY(-2px); box-shadow: 0 5px 15px rgba(204, 0, 0, 0.2);
+        }
+        .dvh-slider-card {
+            background: #fff; border: 1px solid #eee; border-radius: 12px;
+            overflow: hidden; transition: all 0.3s ease; height: 100%; position: relative;
+        }
+        .dvh-slider-card:hover {
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08); border-color: #cc0000;
+            transform: translateY(-5px);
+        }
+        .dvh-slider-img-wrap {
+            height: 220px; width: 100%; display: flex; align-items: center; justify-content: center;
+            background: #f8f9fa; padding: 15px; position: relative;
+        }
+        .dvh-slider-img {
+            max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.4s ease;
+        }
+        .dvh-slider-card:hover .dvh-slider-img { transform: scale(1.08); }
+        .dvh-slider-info { padding: 15px; text-align: center; }
+        .dvh-slider-name {
+            font-size: 16px; color: #333; font-weight: 700; text-decoration: none;
+            display: block; margin-bottom: 8px; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis; transition: color 0.2s;
+        }
+        .dvh-slider-card:hover .dvh-slider-name { color: #cc0000; }
+        .dvh-slider-price { font-size: 18px; color: #cc0000; font-weight: 800; display: block; }
+
+        .dvh-arrow {
+            width: 50px; height: 50px; background: #fff; border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center;
+            position: absolute; top: 50%; transform: translateY(-50%);
+            border: 1px solid #eee; color: #333; transition: 0.3s; opacity: 1; z-index: 5;
+        }
+        .dvh-arrow:hover { background: #cc0000; color: white; border-color: #cc0000; }
+        .dvh-prev { left: -25px; }
+        .dvh-next { right: -25px; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{layout/dvh-header :: header-section}"></div>
+
+<div class="container-fluid p-0 mb-5">
+    <div id="dvhCarousel" class="carousel slide shadow-sm" data-bs-ride="carousel" data-bs-interval="4000">
+        <div class="carousel-indicators">
+            <button th:each="banner, iterStat : ${dvhBanners}" type="button" data-bs-target="#dvhCarousel"
+                    th:data-bs-slide-to="${iterStat.index}" th:classappend="${iterStat.index == 0} ? 'active'"
+                    style="z-index: 20;"></button>
+        </div>
+        <div class="carousel-inner">
+            <div th:each="banner, iterStat : ${dvhBanners}" th:classappend="${iterStat.index == 0} ? 'active'" class="carousel-item">
+                <img th:src="${banner.dvhImage}" class="d-block w-100 main-banner" alt="Banner" onerror="this.src='https://via.placeholder.com/1500x550'">
+                <div class="carousel-caption-custom">
+                    <h1 class="banner-title">CHÀO MỪNG ĐẾN DVH MOTORBIKE</h1>
+                    <p class="banner-subtitle">Hệ thống phân phối xe máy chính hãng - Uy tín - Chất lượng</p>
+                    <a th:href="@{/dvh-products}" class="btn-banner"><i class="fas fa-shopping-cart me-2"></i> KHÁM PHÁ NGAY</a>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#dvhCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#dvhCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold" style="color: #cc0000; text-transform: uppercase;">SẢN PHẨM NỔI BẬT</h2>
+        <div style="width: 80px; height: 4px; background: #cc0000; margin: 15px auto;"></div>
+        <p class="text-muted fs-5">Những mẫu xe đang được săn đón nhất hiện nay</p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col" th:each="xe : ${dvhMotorbikes}">
+            <div class="dvh-product-card">
+                <div class="product-img-wrap">
+                    <a th:href="@{/dvh-products/detail/{id}(id=${xe.dvhId})}">
+                        <img th:src="${xe.dvhImage != null && xe.dvhImage.startsWith('http') ? xe.dvhImage : '/img/' + xe.dvhImage}"
+                             class="product-img" alt="Xe"
+                             onerror="this.src='https://via.placeholder.com/250?text=No+Image'">
+                    </a>
+                    <span th:if="${xe.dvhCondition == 'NEW'}" class="badge bg-danger position-absolute top-0 end-0 m-3">MỚI</span>
+                </div>
+                <div class="product-info">
+                    <a th:href="@{/dvh-products/detail/{id}(id=${xe.dvhId})}" class="product-name" th:text="${xe.dvhName}">Tên xe</a>
+                    <span class="product-price" th:text="${#numbers.formatDecimal(xe.dvhPrice, 0, 'POINT', 0, 'COMMA')} + ' đ'">Giá</span>
+                    <div class="d-flex gap-2 justify-content-center mt-3">
+                        <a th:href="@{/dvh-products/detail/{id}(id=${xe.dvhId})}" class="btn btn-outline-secondary fw-bold flex-grow-1">
+                            <i class="fas fa-eye me-1"></i> Chi tiết
+                        </a>
+                        <a th:href="@{/dvh-cart/add/{id}(id=${xe.dvhId})}" class="btn btn-danger fw-bold flex-grow-1">
+                            <i class="fas fa-shopping-cart me-1"></i> Mua
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a th:href="@{/dvh-products}" class="btn btn-outline-danger btn-lg px-5 fw-bold rounded-pill">
+            XEM TẤT CẢ SẢN PHẨM <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="dvh-slider-section">
+        <div class="dvh-slider-tabs">
+            <a href="/?sort=new" class="dvh-slider-tab"
+               th:classappend="${sort == 'new' || sort == null} ? 'active'">
+                Sản phẩm mới
+            </a>
+
+            <a href="/?sort=best" class="dvh-slider-tab"
+               th:classappend="${sort == 'best'} ? 'active'">
+                Bán chạy
+            </a>
+
+            <a href="/?sort=price" class="dvh-slider-tab"
+               th:classappend="${sort == 'price'} ? 'active'">
+                Giá tốt
+            </a>
+        </div>
+
+        <div id="dvhProductCarousel" class="carousel slide" data-bs-interval="false">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="row g-4">
+                        <div class="col-md-3 col-6" th:each="xe, stat : ${dvhMotorbikes}" th:if="${stat.index < 4}">
+                            <div class="dvh-slider-card">
+                                <div class="dvh-slider-img-wrap">
+                                    <a th:href="@{/dvh-products/detail/{id}(id=${xe.dvhId})}">
+                                        <img th:src="${xe.dvhImage != null && xe.dvhImage.startsWith('http') ? xe.dvhImage : '/img/' + xe.dvhImage}"
+                                             class="dvh-slider-img" alt="Xe"
+                                             onerror="this.src='https://via.placeholder.com/250?text=No+Image'">
+                                    </a>
+                                    <span th:if="${xe.dvhCondition == 'NEW'}" class="badge bg-danger position-absolute top-0 end-0 m-2 shadow-sm">MỚI</span>
+                                </div>
+                                <div class="dvh-slider-info">
+                                    <a th:href="@{/dvh-products/detail/{id}(id=${xe.dvhId})}" class="dvh-slider-name" th:text="${xe.dvhName}">Tên xe</a>
+                                    <span class="dvh-slider-price" th:text="${#numbers.formatDecimal(xe.dvhPrice, 0, 'POINT', 0, 'COMMA')} + ' đ'"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <div class="row g-4">
+                        <div class="col-md-3 col-6" th:each="xe, stat : ${dvhMotorbikes}" th:if="${stat.index >= 4 and stat.index < 8}">
+                            <div class="dvh-slider-card">
+                                <div class="dvh-slider-img-wrap">
+                                    <a th:href="@{/dvh-products/detail/{id}(id=${xe.dvhId})}">
+                                        <img th:src="${xe.dvhImage != null && xe.dvhImage.startsWith('http') ? xe.dvhImage : '/img/' + xe.dvhImage}"
+                                             class="dvh-slider-img" alt="Xe"
+                                             onerror="this.src='https://via.placeholder.com/250?text=No+Image'">
+                                    </a>
+                                    <span th:if="${xe.dvhCondition == 'NEW'}" class="badge bg-danger position-absolute top-0 end-0 m-2 shadow-sm">MỚI</span>
+                                </div>
+                                <div class="dvh-slider-info">
+                                    <a th:href="@{/dvh-products/detail/{id}(id=${xe.dvhId})}" class="dvh-slider-name" th:text="${xe.dvhName}">Tên xe</a>
+                                    <span class="dvh-slider-price" th:text="${#numbers.formatDecimal(xe.dvhPrice, 0, 'POINT', 0, 'COMMA')} + ' đ'"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev dvh-arrow dvh-prev" type="button" data-bs-target="#dvhProductCarousel" data-bs-slide="prev">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="carousel-control-next dvh-arrow dvh-next" type="button" data-bs-target="#dvhProductCarousel" data-bs-slide="next">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{layout/dvh-footer :: footer-section}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

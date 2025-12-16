@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đơn hàng của tôi - DVH Motorbike</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Roboto', sans-serif; }
+        .dvh-header { background: #fff !important; }
+
+        /* Sidebar Profile */
+        .dvh-sidebar-profile { background: white; border-radius: 8px; padding: 20px 0; box-shadow: 0 1px 2px rgba(0,0,0,0.1); overflow: hidden; }
+        .dvh-user-card { display: flex; align-items: center; padding: 0 20px 20px; border-bottom: 1px solid #eee; margin-bottom: 10px; }
+        .dvh-avatar-circle {
+            width: 50px; height: 50px; background: #eee; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: #888; font-size: 24px; border: 3px solid #f9f9f9;
+        }
+        .dvh-user-info { margin-left: 15px; }
+        .dvh-user-name { font-weight: 700; color: #333; margin: 0; font-size: 15px; }
+        .dvh-edit-link { font-size: 13px; color: #888; display: flex; align-items: center; gap: 5px; cursor: pointer; text-decoration: none; }
+        .dvh-menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 25px; color: #555; font-weight: 500; transition: 0.2s; font-size: 15px; text-decoration: none; }
+        .dvh-menu-item:hover { color: #cc0000; background: #fdf2f2; }
+        .dvh-menu-item.active { color: #cc0000; font-weight: 700; border-right: 4px solid #cc0000; background: #fffbfb; }
+        .dvh-menu-icon { width: 22px; text-align: center; }
+
+        /* Order Card Styles */
+        .order-card {
+            border: none; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: #fff; margin-bottom: 20px; overflow: hidden;
+        }
+        .order-header {
+            background: #fdfdfd; padding: 15px 20px; border-bottom: 1px solid #eee;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+        }
+        .order-body { padding: 20px; }
+        .order-footer {
+            padding: 15px 20px; background: #fff; border-top: 1px solid #eee;
+            text-align: right;
+        }
+        .status-badge { font-weight: 500; font-size: 0.85rem; padding: 6px 15px; border-radius: 30px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .dvh-main-content { background: white; border-radius: 8px; padding: 30px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); min-height: 550px; }
+        .dvh-section-title { font-size: 20px; font-weight: 600; color: #333; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{layout/dvh-header :: header-section}"></div>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="dvh-sidebar-profile">
+                <div class="dvh-user-card">
+                    <div class="dvh-avatar-circle">
+                        <span th:text="${session.dvhCurrentUser != null ? #strings.substring(session.dvhCurrentUser.dvhFullName,0,1) : 'U'}">U</span>
+                    </div>
+                    <div class="dvh-user-info">
+                        <p class="dvh-user-name" th:text="${session.dvhCurrentUser?.dvhUsername}">User</p>
+                        <a th:href="@{/dvh-profile}" class="dvh-edit-link"><i class="fas fa-pen"></i> Sửa hồ sơ</a>
+                    </div>
+                </div>
+
+                <a th:href="@{/dvh-profile}" class="dvh-menu-item">
+                    <i class="fas fa-user dvh-menu-icon"></i> Hồ sơ của tôi
+                </a>
+
+                <a th:href="@{/dvh-orders}" class="dvh-menu-item active">
+                    <i class="fas fa-clipboard-list dvh-menu-icon"></i> Đơn mua
+                </a>
+
+                <a th:if="${session.dvhCurrentUser?.dvhRole == 'ADMIN'}"
+                   th:href="@{/dvh-admin/dashboard}" class="dvh-menu-item" style="color: #d35400;">
+                    <i class="fas fa-tachometer-alt dvh-menu-icon"></i> Quản trị Web
+                </a>
+
+                <hr style="margin: 10px 20px; border-color: #eee;">
+                <a th:href="@{/dvh-login/dvh-logout}" class="dvh-menu-item" style="color: #e74c3c;">
+                    <i class="fas fa-sign-out-alt dvh-menu-icon"></i> Đăng xuất
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="dvh-main-content">
+                <h4 class="dvh-section-title"><i class="fas fa-box-open text-danger me-2"></i> Lịch Sử Đơn Hàng</h4>
+
+                <div th:if="${dvhOrders != null && !dvhOrders.empty}">
+                    <div class="order-card" th:each="order : ${dvhOrders}">
+                        <div class="order-header">
+                            <div>
+                                <span class="fw-bold text-secondary" th:text="'#' + ${order.dvhCode}">#MÃ_ĐƠN</span>
+                                <span class="text-muted mx-2">|</span>
+                                <span class="text-muted small" th:text="${order.dvhOrderDate}">Ngày đặt</span>
+                            </div>
+
+                            <div>
+                                <span th:if="${order.dvhStatus == 'CHO_XAC_NHAN'}" class="status-badge bg-warning text-dark">⏳ Chờ xác nhận</span>
+                                <span th:if="${order.dvhStatus == 'DANG_GIAO'}" class="status-badge bg-primary text-white">🚚 Đang giao hàng</span>
+                                <span th:if="${order.dvhStatus == 'DA_GIAO'}" class="status-badge bg-success text-white">✅ Hoàn thành</span>
+                                <span th:if="${order.dvhStatus == 'HUY'}" class="status-badge bg-danger text-white">❌ Đã hủy</span>
+                                <span th:if="${order.dvhStatus != 'CHO_XAC_NHAN' && order.dvhStatus != 'DANG_GIAO' && order.dvhStatus != 'DA_GIAO' && order.dvhStatus != 'HUY'}"
+                                      class="status-badge bg-secondary text-white" th:text="${order.dvhStatus}"></span>
+                            </div>
+                        </div>
+
+                        <div class="order-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <p class="mb-2 fw-bold text-dark">Thông tin nhận hàng:</p>
+                                    <p class="mb-1 text-muted small"><i class="fas fa-user me-2 width-20"></i> <span th:text="${order.dvhReceiverName}"></span></p>
+                                    <p class="mb-1 text-muted small"><i class="fas fa-phone me-2 width-20"></i> <span th:text="${order.dvhReceiverPhone}"></span></p>
+                                    <p class="mb-0 text-muted small"><i class="fas fa-map-marker-alt me-2 width-20"></i> <span th:text="${order.dvhReceiverAddress}"></span></p>
+                                </div>
+                                <div class="col-md-4 text-md-end mt-3 mt-md-0 border-start ps-md-4">
+                                    <p class="text-muted mb-1 small">Tổng tiền thanh toán</p>
+                                    <h4 class="text-danger fw-bold mb-0"
+                                        th:text="${order.dvhTotalAmount != null ? #numbers.formatDecimal(order.dvhTotalAmount, 0, 'POINT', 0, 'COMMA') + ' đ' : '0 đ'}">
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="order-footer">
+                            <a th:if="${order.dvhStatus == 'CHO_XAC_NHAN'}" href="#" class="btn btn-outline-danger btn-sm me-2" onclick="return confirm('Bạn muốn hủy đơn này? Vui lòng liên hệ hotline.')">
+                                <i class="fas fa-times me-1"></i> Hủy Đơn
+                            </a>
+
+                            <a th:href="@{/dvh-products}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-redo me-1"></i> Mua Lại
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${dvhOrders == null || dvhOrders.empty}" class="text-center py-5 bg-white rounded">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" width="120" class="mb-3 opacity-50">
+                    <h5 class="text-muted fw-bold">Bạn chưa có đơn hàng nào</h5>
+                    <p class="text-muted mb-4 small">Hãy khám phá các mẫu xe mới nhất tại cửa hàng của chúng tôi.</p>
+                    <a th:href="@{/dvh-products}" class="btn btn-danger px-4 py-2 fw-bold rounded-pill">
+                        <i class="fas fa-shopping-cart me-2"></i> MUA SẮM NGAY
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

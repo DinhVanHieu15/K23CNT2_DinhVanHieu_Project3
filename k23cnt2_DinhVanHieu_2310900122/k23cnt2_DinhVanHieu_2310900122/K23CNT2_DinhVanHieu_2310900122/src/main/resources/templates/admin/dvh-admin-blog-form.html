@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm/Sửa Blog - DVH Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5 mb-5">
+    <div class="card mx-auto shadow-sm" style="max-width: 900px;">
+        <div class="card-header bg-primary text-white fw-bold text-center py-3">
+            <span th:if="${dvhBlogPost.dvhId == null}"><i class="fas fa-pen-nib"></i> THÊM BÀI VIẾT MỚI</span>
+            <span th:if="${dvhBlogPost.dvhId != null}"><i class="fas fa-edit"></i> CHỈNH SỬA BÀI VIẾT</span>
+        </div>
+
+        <div class="card-body p-4">
+            <form th:action="@{/dvh-admin/blogs/save}" th:object="${dvhBlogPost}" method="post">
+
+                <input type="hidden" th:field="*{dvhId}">
+                <input type="hidden" th:field="*{dvhCreatedAt}">
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tiêu đề bài viết <span class="text-danger">*</span></label>
+                    <input type="text" th:field="*{dvhTitle}" class="form-control" required placeholder="Nhập tiêu đề hấp dẫn...">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Link ảnh đại diện (URL) <span class="text-danger">*</span></label>
+                    <input type="text" th:field="*{dvhImage}" class="form-control" placeholder="Dán link ảnh vào đây (VD: https://imgur.com/...)" required>
+
+                    <div class="mt-3 p-2 border rounded bg-white text-center"
+                         th:if="${dvhBlogPost.dvhImage != null && dvhBlogPost.dvhImage != ''}">
+                        <span class="d-block small text-muted mb-1">Ảnh hiện tại:</span>
+                        <img th:src="${dvhBlogPost.dvhImage.startsWith('http') ? dvhBlogPost.dvhImage : '/img/' + dvhBlogPost.dvhImage}"
+                             style="max-height: 200px; max-width: 100%; border-radius: 5px;"
+                             onerror="this.src='https://via.placeholder.com/200?text=Lỗi+Ảnh'">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nội dung chi tiết <span class="text-danger">*</span></label>
+                    <textarea th:field="*{dvhContent}" class="form-control" rows="10" required placeholder="Viết nội dung bài viết tại đây..."></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Ngày hiển thị <span class="text-danger">*</span></label>
+                    <input type="date" th:field="*{dvhCreatedDate}" class="form-control" required>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                    <a th:href="@{/dvh-admin/blogs}" class="btn btn-secondary px-4 fw-bold">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                    <button type="submit" class="btn btn-success px-4 fw-bold">
+                        <i class="fas fa-save"></i> LƯU BÀI VIẾT
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
